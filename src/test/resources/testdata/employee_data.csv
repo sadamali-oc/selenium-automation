@@ -1,0 +1,5 @@
+name,initials,firstName,lastName,address,mobile,phone,reference,vehicleNo,designation,epfNo,location,dateOfBirth
+Test Employee One,TE,Test,Employee One,No. 100 Test Street,0771234567,0112345678,REF001,TEST-1001,QA Tester,EPF001,Head Office,1995-01-01
+Test Employee Two,TE,Test,Employee Two,No. 200 Test Street,0772345678,0112345679,REF002,TEST-1002,QA Engineer,EPF002,Branch Office,1996-02-02
+Test Employee Three,TE,Test,Employee Three,No. 300 Test Street,0773456789,0112345680,REF003,TEST-1003,QA Analyst,EPF003,Main Office,1997-03-03
+
