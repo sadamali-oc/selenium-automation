@@ -20,7 +20,7 @@ target/
 # Test Configuration / Credentials
 # ==============================
 config.properties
-**/config.properties
+src/test/java/tests/resources/config.properties
 .env
 *.env
 

@@ -1,0 +1,4 @@
+name,email,mobile,expected
+Valid Employee,test.employee1@example.com,0771234567,valid
+Invalid Email,invalid-email,0771234567,invalid
+Invalid Mobile,test.employee2@example.com,077ABC123,invalid

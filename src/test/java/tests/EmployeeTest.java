@@ -25,15 +25,19 @@ public class EmployeeTest {
     public void setUp() {
 
         driver = DriverFactory.createDriver();
-        driver.get("https://uat.ezuite.com/");
+
+        // Open login page
+        driver.get(ConfigReader.get("base.url"));
 
         loginPage = new LoginPage(driver);
 
-        String username = ConfigReader.get("username");
-        String password = ConfigReader.get("password");
+        // Login
+        loginPage.login(
+                ConfigReader.get("username"),
+                ConfigReader.get("password")
+        );
 
-        loginPage.login(username, password);
-
+        // Wait for Dashboard
         WebDriverWait wait =
                 new WebDriverWait(driver, Duration.ofSeconds(30));
 
@@ -41,10 +45,10 @@ public class EmployeeTest {
                 ExpectedConditions.urlContains("/Dashboard")
         );
 
-        driver.get(
-                "https://uat.ezuite.com/Distribute/DistributeMain/Employee"
-        );
+        // Open Employee page
+        driver.get(ConfigReader.get("employee.url"));
 
+        // Wait for Employee page
         wait.until(
                 ExpectedConditions.urlContains("/Employee")
         );
@@ -55,39 +59,73 @@ public class EmployeeTest {
     @Test
     public void verifyEmployeeSave() {
 
+        /*
+         * Generate unique test data.
+         * This prevents duplicate NIC/email errors
+         * when the test is executed multiple times.
+         */
+        String timestamp =
+                String.valueOf(System.currentTimeMillis());
+
+        String uniqueNic =
+                "299" + timestamp.substring(timestamp.length() - 9);
+
+        String uniqueEmail =
+                "test.employee." + timestamp + "@example.com";
+
+        // Open New Employee form
         employeePage.clickNewEmployee();
 
         // Employee Group
         employeePage.selectEmployeeGroup();
 
-        // Employee Information
+        // Title
         employeePage.selectTitle("Mr.");
+
+        // Basic employee information
         employeePage.enterName("Test Employee");
         employeePage.enterInitials("TE");
         employeePage.enterFirstName("Test");
         employeePage.enterLastName("Employee");
         employeePage.enterAddress("No. 100, Test Street");
-        employeePage.enterNic("299512345678");
-        employeePage.enterEmail("test.employee@example.com");
+
+        // Unique NIC
+        employeePage.enterNic(uniqueNic);
+
+        // Unique email
+        employeePage.enterEmail(uniqueEmail);
+
+        // Contact details
         employeePage.enterMobile("0771234567");
         employeePage.enterPhone("0112345678");
+
+        // Other details
         employeePage.enterReference("REF001");
         employeePage.enterVehicleNo("TEST-1234");
-        employeePage.selectEmployeeStatus("Active");
-        employeePage.enterRemark("Selenium Automation Test");
 
-        // Bank Information
+        // Employee status
+        employeePage.selectEmployeeStatus("Active");
+
+        // Remark
+        employeePage.enterRemark(
+                "Selenium Automation Test"
+        );
+
+        // Bank details
         employeePage.enterBankName("Test Bank");
         employeePage.enterBankAccount("1234567890");
 
-        // Employment Information
+        // Employment details
         employeePage.enterDesignation("QA Tester");
         employeePage.enterEpfNo("EPF001");
         employeePage.enterDateJoined("2026-09-17");
         employeePage.enterLocation("Head Office");
         employeePage.enterDateOfBirth("1995-01-01");
 
-        // Verify Employee Information
+        // ==========================================
+        // VERIFY ENTERED VALUES
+        // ==========================================
+
         Assert.assertEquals(
                 employeePage.getNameValue(),
                 "Test Employee",
@@ -120,13 +158,13 @@ public class EmployeeTest {
 
         Assert.assertEquals(
                 employeePage.getNicValue(),
-                "299512345678",
+                uniqueNic,
                 "NIC was not entered correctly."
         );
 
         Assert.assertEquals(
                 employeePage.getEmailValue(),
-                "test.employee@example.com",
+                uniqueEmail,
                 "Email was not entered correctly."
         );
 
@@ -160,7 +198,6 @@ public class EmployeeTest {
                 "Remark was not entered correctly."
         );
 
-        // Verify Bank Information
         Assert.assertEquals(
                 employeePage.getBankNameValue(),
                 "Test Bank",
@@ -173,7 +210,6 @@ public class EmployeeTest {
                 "Bank Account was not entered correctly."
         );
 
-        // Verify Employment Information
         Assert.assertEquals(
                 employeePage.getDesignationValue(),
                 "QA Tester",
@@ -192,10 +228,13 @@ public class EmployeeTest {
                 "Location was not entered correctly."
         );
 
-        // Save Employee
+        // ==========================================
+        // SAVE EMPLOYEE
+        // ==========================================
+
         employeePage.clickSave();
 
-        // Verify Successful Save
+        // Verify employee form closes after save
         Assert.assertTrue(
                 employeePage.isEmployeeFormClosed(),
                 "Employee form did not close after saving."
